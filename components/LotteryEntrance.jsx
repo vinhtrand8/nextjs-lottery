@@ -49,12 +49,14 @@ export default function LotteryEntrance() {
     });
 
     const updateUI = async () => {
-        const entranceFeeFromCall = (await getEntranceFee()).toString();
-        const numPlayerFromCall = (await getNumberOfPlayers()).toString();
-        const recentWinnerFromCall = await getRecentWinner();
-        setEntranceFee(entranceFeeFromCall);
-        setNumPlayer(numPlayerFromCall);
-        setRecentWinner(recentWinnerFromCall);
+        if (raffleAddress) {
+            const entranceFeeFromCall = (await getEntranceFee()).toString();
+            const numPlayerFromCall = (await getNumberOfPlayers()).toString();
+            const recentWinnerFromCall = await getRecentWinner();
+            setEntranceFee(entranceFeeFromCall);
+            setNumPlayer(numPlayerFromCall);
+            setRecentWinner(recentWinnerFromCall);
+        }
     };
 
     const handleSuccess = async (tx) => {
