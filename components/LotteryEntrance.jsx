@@ -15,7 +15,11 @@ export default function LotteryEntrance() {
     const chainId = parseInt(chainIdHex);
     const raffleAddress = chainId in contractAddress ? contractAddress[chainId][0] : null;
 
-    const { runContractFunction: enterRaffle } = useWeb3Contract({
+    const {
+        runContractFunction: enterRaffle,
+        isLoading,
+        isFetching,
+    } = useWeb3Contract({
         abi: abi,
         contractAddress: raffleAddress,
         functionName: "enterRaffle",
@@ -86,6 +90,7 @@ export default function LotteryEntrance() {
 
     useEffect(() => {
         if (isWeb3Enabled) {
+            updateUI();
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             provider.on(enterEvent, async () => {
                 updateUI();
@@ -98,10 +103,11 @@ export default function LotteryEntrance() {
 
     return (
         <div>
-            Hi from Lottery Entrance!
+            <h1 className="text-xl my-2">Hi from Lottery Entrance!</h1>
             {raffleAddress ? (
                 <div>
                     <button
+                        className="bg-blue-500 hover:bg-blue-700 rounded p-2 my-2"
                         onClick={async () => {
                             await enterRaffle({
                                 onSuccess: handleSuccess,
@@ -109,14 +115,20 @@ export default function LotteryEntrance() {
                             });
                         }}
                     >
-                        Enter Raffle
+                        {isLoading || isFetching ? (
+                            <div className="animate-spin h-8 w-8 border-b-2 rounded-full"></div>
+                        ) : (
+                            <div>Enter Raffle</div>
+                        )}
                     </button>
-                    <div>Entrance Fee: {ethers.utils.formatUnits(entranceFee, "ether")} ETH</div>
-                    <div>Number of Players: {numPlayer}</div>
-                    <div>Recent Winner: {recentWinner}</div>
+                    <div className="my-2">
+                        Entrance Fee: {ethers.utils.formatUnits(entranceFee, "ether")} ETH
+                    </div>
+                    <div className="my-2">Number of Players: {numPlayer}</div>
+                    <div className="my-2">Recent Winner: {recentWinner}</div>
                 </div>
             ) : (
-                <div>Please connect to a support chain</div>
+                <div>No Raffle Address Deteched</div>
             )}
         </div>
     );
